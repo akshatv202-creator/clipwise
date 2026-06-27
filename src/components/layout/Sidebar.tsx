@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, LayoutDashboard, Upload, FolderOpen, Palette, BarChart3, Settings, Crown, HelpCircle, LogOut, Clock, Film } from "lucide-react";
+import { Zap, LayoutDashboard, Upload, FolderOpen, Palette, BarChart3, Settings, Crown, HelpCircle, LogOut, Clock, Film, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -17,18 +18,37 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
-      {/* Hover trigger zone - invisible strip on left edge */}
-      <div className="fixed left-0 top-0 bottom-0 w-4 z-50 peer" />
+      {/* Menu toggle button - always visible on left */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed left-4 top-4 z-[60] w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+        style={{ backgroundColor: isOpen ? "#18181b" : "#09090b", border: "1px solid #27272a" }}
+      >
+        {isOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-zinc-400" />}
+      </button>
 
-      {/* Sidebar - hidden by default, slides in on hover */}
+      {/* Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-[55] bg-black/50"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
       <aside
-        className="fixed left-0 top-0 bottom-0 w-64 border-r border-zinc-800/50 flex flex-col z-50 transition-transform duration-300 ease-in-out -translate-x-full peer-hover:translate-x-0 hover:translate-x-0"
+        className={cn(
+          "fixed left-0 top-0 bottom-0 w-64 border-r border-zinc-800/50 flex flex-col z-[58] transition-transform duration-300 ease-in-out",
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        )}
         style={{ backgroundColor: "#09090b" }}
       >
         <div className="h-16 flex items-center px-6 border-b border-zinc-800/50">
-          <Link href="/projects" className="flex items-center gap-2">
+          <Link href="/projects" className="flex items-center gap-2 ml-8">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center"><Zap className="w-4 h-4 text-white" /></div>
             <span className="text-lg font-bold text-white">ClipWise</span>
           </Link>
@@ -37,7 +57,7 @@ export default function Sidebar() {
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link key={item.label} href={item.href}>
+              <Link key={item.label} href={item.href} onClick={() => setIsOpen(false)}>
                 <div className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200", isActive ? "bg-violet-500/10 text-violet-300 border border-violet-500/20" : "text-zinc-400 hover:text-white hover:bg-white/5")}>
                   <item.icon className={cn("w-4 h-4", isActive && "text-violet-400")} />
                   <span className="font-medium">{item.label}</span>
@@ -50,10 +70,10 @@ export default function Sidebar() {
           <div className="mb-3 p-3 rounded-xl bg-gradient-to-br from-violet-900/30 to-purple-900/30 border border-violet-500/20">
             <div className="flex items-center gap-2 mb-2"><Crown className="w-4 h-4 text-violet-400" /><span className="text-xs font-semibold text-white">Upgrade to Pro</span></div>
             <p className="text-[10px] text-zinc-400 mb-2">Unlock 4K exports, unlimited videos & more</p>
-            <Link href="/settings"><button className="w-full py-1.5 rounded-lg bg-violet-500/20 hover:bg-violet-500/30 text-xs font-medium text-violet-300 transition-colors">View Plans</button></Link>
+            <Link href="/settings" onClick={() => setIsOpen(false)}><button className="w-full py-1.5 rounded-lg bg-violet-500/20 hover:bg-violet-500/30 text-xs font-medium text-violet-300 transition-colors">View Plans</button></Link>
           </div>
-          <Link href="/settings"><div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition-all"><Settings className="w-4 h-4" /><span>Settings</span></div></Link>
-          <Link href="/projects"><div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition-all"><HelpCircle className="w-4 h-4" /><span>Help</span></div></Link>
+          <Link href="/settings" onClick={() => setIsOpen(false)}><div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition-all"><Settings className="w-4 h-4" /><span>Settings</span></div></Link>
+          <Link href="/projects" onClick={() => setIsOpen(false)}><div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition-all"><HelpCircle className="w-4 h-4" /><span>Help</span></div></Link>
           <button className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-zinc-500 hover:text-red-400 hover:bg-red-500/5 transition-all w-full"><LogOut className="w-4 h-4" /><span>Sign Out</span></button>
         </div>
       </aside>
