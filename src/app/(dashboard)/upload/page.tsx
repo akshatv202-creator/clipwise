@@ -17,7 +17,6 @@ export default function UploadPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const [projectId, setProjectId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [processingStarted, setProcessingStarted] = useState(false);
 
@@ -27,67 +26,23 @@ export default function UploadPage() {
     setUploadProgress(0);
     setError(null);
 
-    try {
-      // 1. Get presigned URL from our API
-      const presignRes = await fetch("/api/upload/presign", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          filename: selectedFile.name,
-          fileSize: selectedFile.size,
-          contentType: selectedFile.type,
-        }),
+    // Demo mode: simulate upload progress
+    const interval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsUploading(false);
+          setIsComplete(true);
+          return 100;
+        }
+        return prev + Math.random() * 12 + 3;
       });
-
-      const presignData = await presignRes.json();
-      if (!presignRes.ok) {
-        throw new Error(presignData.error || "Failed to get upload URL");
-      }
-
-      const { uploadUrl, projectId: pid } = presignData.data;
-      setProjectId(pid);
-
-      // 2. Upload directly to S3/R2 with progress
-      await new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            setUploadProgress((e.loaded / e.total) * 100);
-          }
-        };
-        xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            resolve();
-          } else {
-            reject(new Error(`Upload failed: ${xhr.status}`));
-          }
-        };
-        xhr.onerror = () => reject(new Error("Upload network error"));
-        xhr.open("PUT", uploadUrl);
-        xhr.setRequestHeader("Content-Type", selectedFile.type);
-        xhr.send(selectedFile);
-      });
-
-      // 3. Notify backend upload is complete
-      await fetch("/api/upload/complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId: pid }),
-      });
-
-      setIsUploading(false);
-      setIsComplete(true);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Upload failed";
-      setError(msg);
-      setIsUploading(false);
-    }
+    }, 200);
   };
 
-  const startProcessing = async () => {
-    if (!projectId) return;
+  const startProcessing = () => {
     setProcessingStarted(true);
-    router.push(`/processing?id=${projectId}`);
+    router.push("/processing");
   };
 
   const resetUpload = () => {
@@ -95,7 +50,6 @@ export default function UploadPage() {
     setUploadProgress(0);
     setIsUploading(false);
     setIsComplete(false);
-    setProjectId(null);
     setError(null);
   };
 
@@ -170,9 +124,7 @@ export default function UploadPage() {
                     <Upload className="w-8 h-8 text-violet-400" />
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-2">
-                    {isDragging
-                      ? "Drop your video here"
-                      : "Drag & drop your video"}
+                    {isDragging ? "Drop your video here" : "Drag & drop your video"}
                   </h3>
                   <p className="text-sm text-zinc-400 mb-6">
                     or click to browse • MP4, MOV, AVI, MKV, WebM
@@ -246,9 +198,7 @@ export default function UploadPage() {
                 >
                   <div className="flex items-center gap-2 text-emerald-400">
                     <CheckCircle className="w-5 h-5" />
-                    <span className="text-sm font-medium">
-                      Upload complete!
-                    </span>
+                    <span className="text-sm font-medium">Upload complete!</span>
                   </div>
                   <div className="flex gap-3">
                     <Button
@@ -264,9 +214,7 @@ export default function UploadPage() {
                       variant="secondary"
                       size="lg"
                       icon={<ArrowRight className="w-4 h-4" />}
-                      onClick={() =>
-                        router.push(`/projects`)
-                      }
+                      onClick={() => router.push("/projects")}
                     >
                       Go to Projects
                     </Button>
@@ -277,6 +225,37 @@ export default function UploadPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Processing Options */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card variant="glass" hover padding="md">
+          <div className="text-center">
+            <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mx-auto mb-3">
+              <Sparkles className="w-5 h-5 text-violet-400" />
+            </div>
+            <h3 className="text-sm font-medium text-white mb-1">Auto Mode</h3>
+            <p className="text-xs text-zinc-500">AI detects everything automatically</p>
+          </div>
+        </Card>
+        <Card variant="glass" hover padding="md">
+          <div className="text-center">
+            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center mx-auto mb-3">
+              <Film className="w-5 h-5 text-cyan-400" />
+            </div>
+            <h3 className="text-sm font-medium text-white mb-1">Template Mode</h3>
+            <p className="text-xs text-zinc-500">Choose from 50+ editing templates</p>
+          </div>
+        </Card>
+        <Card variant="glass" hover padding="md">
+          <div className="text-center">
+            <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mx-auto mb-3">
+              <Cloud className="w-5 h-5 text-amber-400" />
+            </div>
+            <h3 className="text-sm font-medium text-white mb-1">Batch Mode</h3>
+            <p className="text-xs text-zinc-500">Upload multiple videos in queue</p>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }
