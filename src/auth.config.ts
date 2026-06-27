@@ -1,30 +1,33 @@
 import type { NextAuthConfig } from "next-auth";
-import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 
 /**
- * Edge-compatible auth config (NO Prisma, NO Node.js modules).
- * Used by middleware which runs in Edge runtime.
- * The full auth.ts adds the PrismaAdapter for API routes.
+ * Edge-compatible auth config (NO database, NO Node.js modules).
+ * Used by middleware which runs in Vercel Edge runtime.
  */
 export const authConfig: NextAuthConfig = {
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    // Credentials provider must be re-declared in auth.ts with actual DB lookup
-    // Here we just define it so middleware knows it exists
     Credentials({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        name: { label: "Name", type: "text" },
+        isSignup: { label: "Is Signup", type: "text" },
       },
-      // This won't actually be called from middleware
-      // The real authorize function is in auth.ts
-      async authorize() {
-        return null;
+      async authorize(credentials) {
+        // Demo mode: accept any credentials
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+        const email = credentials.email as string;
+        const name = (credentials.name as string) || email.split("@")[0];
+        return {
+          id: `user_${Buffer.from(email).toString("base64").slice(0, 12)}`,
+          name,
+          email,
+          image: null,
+        };
       },
     }),
   ],
@@ -48,7 +51,6 @@ export const authConfig: NextAuthConfig = {
       }
       return session;
     },
-    // This is used by middleware to check auth
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const pathname = nextUrl.pathname;
@@ -74,12 +76,10 @@ export const authConfig: NextAuthConfig = {
         pathname.startsWith(route)
       );
 
-      // Redirect unauthenticated users to login
       if (isProtected && !isLoggedIn) {
-        return false; // NextAuth will redirect to signIn page
+        return false;
       }
 
-      // Redirect authenticated users away from auth pages
       if (isAuthRoute && isLoggedIn) {
         return Response.redirect(new URL("/projects", nextUrl));
       }
