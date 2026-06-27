@@ -10,7 +10,7 @@ export default function DashboardHeader() {
   const userInitial = session?.user?.name?.[0] || session?.user?.email?.[0] || "U";
 
   return (
-    <header className="h-16 border-b border-white/5 glass-strong flex items-center justify-between px-6 sticky top-0 z-30">
+    <header className="h-16 border-b border-zinc-800/50 bg-zinc-950/80 backdrop-blur-xl flex items-center justify-between px-6 sticky top-0 z-30">
       <div className="flex items-center gap-4 flex-1 max-w-md">
         <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />

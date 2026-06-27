@@ -19,8 +19,8 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-64 glass-strong border-r border-white/5 flex flex-col z-40">
-      <div className="h-16 flex items-center px-6 border-b border-white/5">
+    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-zinc-950/95 backdrop-blur-xl border-r border-zinc-800/50 flex flex-col z-40">
+      <div className="h-16 flex items-center px-6 border-b border-zinc-800/50">
         <Link href="/projects" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center"><Zap className="w-4 h-4 text-white" /></div>
           <span className="text-lg font-bold text-white">ClipWise</span>
@@ -39,7 +39,7 @@ export default function Sidebar() {
           );
         })}
       </nav>
-      <div className="px-3 py-4 border-t border-white/5 space-y-1">
+      <div className="px-3 py-4 border-t border-zinc-800/50 space-y-1">
         <div className="mb-3 p-3 rounded-xl bg-gradient-to-br from-violet-900/30 to-purple-900/30 border border-violet-500/20">
           <div className="flex items-center gap-2 mb-2"><Crown className="w-4 h-4 text-violet-400" /><span className="text-xs font-semibold text-white">Upgrade to Pro</span></div>
           <p className="text-[10px] text-zinc-400 mb-2">Unlock 4K exports, unlimited videos & more</p>
