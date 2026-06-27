@@ -1,49 +1,11 @@
-import { auth } from "@/auth";
-import { NextResponse } from "next/server";
+import NextAuth from "next-auth";
+import { authConfig } from "./auth.config";
 
-// Routes that require authentication
-const protectedRoutes = [
-  "/projects",
-  "/upload",
-  "/processing",
-  "/preview",
-  "/settings",
-  "/brand-kit",
-  "/templates",
-  "/analytics",
-  "/admin",
-];
-
-// Routes that should redirect to dashboard if already logged in
-const authRoutes = ["/login", "/signup"];
-
-export default auth((req) => {
-  const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
-  const pathname = nextUrl.pathname;
-
-  // Check if it's a protected route
-  const isProtected = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
-
-  // Check if it's an auth route (login/signup)
-  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
-
-  // Redirect unauthenticated users to login
-  if (isProtected && !isLoggedIn) {
-    const loginUrl = new URL("/login", nextUrl);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // Redirect authenticated users away from auth pages
-  if (isAuthRoute && isLoggedIn) {
-    return NextResponse.redirect(new URL("/projects", nextUrl));
-  }
-
-  return NextResponse.next();
-});
+/**
+ * Middleware uses the Edge-compatible auth config (no Prisma/pg).
+ * Route protection logic is handled in authConfig.callbacks.authorized
+ */
+export default NextAuth(authConfig).auth;
 
 export const config = {
   matcher: [
@@ -53,7 +15,7 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization)
      * - favicon.ico
-     * - public files
+     * - public files (images, etc.)
      */
     "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*$).*)",
   ],
