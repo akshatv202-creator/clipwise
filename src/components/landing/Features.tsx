@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Brain, Scissors, Palette, Type, Image, Share2, Wand2, Zap, Music, Camera, Layers, Globe } from "lucide-react";
 import Card from "@/components/ui/Card";
 
@@ -23,15 +22,15 @@ export default function Features() {
   return (
     <section id="features" className="relative py-32 px-6">
       <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+        <div className="text-center mb-16 animate-fade-up">
           <span className="text-sm font-medium text-violet-400 uppercase tracking-wider">Features</span>
           <h2 className="text-4xl md:text-5xl font-bold text-white mt-3 mb-4">Everything Your Video Needs</h2>
           <p className="text-lg text-zinc-400 max-w-2xl mx-auto">Professional-grade editing powered by AI. No timeline. No complexity. Just results.</p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => (
-            <motion.div key={feature.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.05 }}>
+            <div key={feature.title} className="animate-fade-up" style={{ animationDelay: `${index * 0.05}s` }}>
               <Card variant="glass" hover padding="lg" className="h-full">
                 <div className={`w-12 h-12 rounded-xl ${feature.bg} flex items-center justify-center mb-4`}>
                   <feature.icon className={`w-6 h-6 ${feature.color}`} />
@@ -39,7 +38,7 @@ export default function Features() {
                 <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
                 <p className="text-sm text-zinc-400 leading-relaxed">{feature.description}</p>
               </Card>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

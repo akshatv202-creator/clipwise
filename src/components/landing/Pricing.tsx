@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Check, Sparkles } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -16,15 +15,15 @@ export default function Pricing() {
   return (
     <section id="pricing" className="relative py-32 px-6">
       <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
+        <div className="text-center mb-16 animate-fade-up">
           <span className="text-sm font-medium text-violet-400 uppercase tracking-wider">Pricing</span>
           <h2 className="text-4xl md:text-5xl font-bold text-white mt-3 mb-4">Simple, Transparent Pricing</h2>
           <p className="text-lg text-zinc-400 max-w-2xl mx-auto">Start free, upgrade when you need more power.</p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {plans.map((plan, index) => (
-            <motion.div key={plan.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.1 }} className="relative">
+            <div key={plan.name} className="relative animate-fade-up" style={{ animationDelay: `${index * 0.1}s` }}>
               {plan.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
                   <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-violet-600 to-cyan-500 text-white flex items-center gap-1"><Sparkles className="w-3 h-3" /> Most Popular</span>
@@ -49,7 +48,7 @@ export default function Pricing() {
                 </ul>
                 <Button variant={plan.popular ? "primary" : "secondary"} size="lg" className="w-full">{plan.cta}</Button>
               </Card>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

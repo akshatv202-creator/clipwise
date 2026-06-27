@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Zap, Menu, X } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
@@ -10,12 +9,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <motion.nav
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="fixed top-0 left-0 right-0 z-50 glass-strong"
-    >
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-strong animate-fade-in">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center">
@@ -42,15 +36,15 @@ export default function Navbar() {
       </div>
 
       {mobileOpen && (
-        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="md:hidden glass-strong border-t border-white/5 px-6 py-4 space-y-4">
+        <div className="md:hidden glass-strong border-t border-white/5 px-6 py-4 space-y-4">
           <a href="#features" className="block text-zinc-300 hover:text-white">Features</a>
           <a href="#pricing" className="block text-zinc-300 hover:text-white">Pricing</a>
           <div className="flex gap-3 pt-4">
             <Link href="/login"><Button variant="secondary" size="md">Sign In</Button></Link>
             <Link href="/signup"><Button variant="primary" size="md">Get Started</Button></Link>
           </div>
-        </motion.div>
+        </div>
       )}
-    </motion.nav>
+    </nav>
   );
 }

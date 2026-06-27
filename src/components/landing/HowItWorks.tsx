@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Upload, Brain, Wand2, Download } from "lucide-react";
 
 const steps = [
@@ -14,16 +13,16 @@ export default function HowItWorks() {
   return (
     <section id="workflow" className="relative py-32 px-6">
       <div className="relative max-w-5xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-20">
+        <div className="text-center mb-20 animate-fade-up">
           <span className="text-sm font-medium text-violet-400 uppercase tracking-wider">How it works</span>
           <h2 className="text-4xl md:text-5xl font-bold text-white mt-3 mb-4">Four Steps to Viral Content</h2>
           <p className="text-lg text-zinc-400 max-w-2xl mx-auto">From raw footage to professionally edited, platform-ready content in minutes.</p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
           <div className="hidden md:block absolute top-12 left-[12%] right-[12%] h-px bg-gradient-to-r from-violet-500/50 via-pink-500/50 to-orange-500/50" />
           {steps.map((step, index) => (
-            <motion.div key={step.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.15 }} className="relative text-center">
+            <div key={step.title} className="relative text-center animate-fade-up" style={{ animationDelay: `${index * 0.15}s` }}>
               <div className="relative inline-flex mb-6">
                 <div className={`w-24 h-24 rounded-3xl bg-gradient-to-br ${step.color} p-[1px]`}>
                   <div className="w-full h-full rounded-3xl bg-zinc-950 flex items-center justify-center">
@@ -36,7 +35,7 @@ export default function HowItWorks() {
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">{step.title}</h3>
               <p className="text-sm text-zinc-400 leading-relaxed">{step.description}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
